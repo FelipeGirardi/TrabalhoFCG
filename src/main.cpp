@@ -5,8 +5,10 @@
 //    INF01047 Fundamentos de Computação Gráfica
 //               Prof. Eduardo Gastal
 //
-//                   LABORATÓRIO 5
+//                   Trabalho Final
 //
+//            Felipe Girardi e Lucca Milano
+//               (00264098)     (00287683)
 
 // Arquivos "headers" padrões de C podem ser incluídos em um
 // programa C++, sendo necessário somente adicionar o caractere
@@ -168,7 +170,7 @@ float g_CameraPhi = 0.0f;   // Ângulo em relação ao eixo Y
 float g_CameraDistance = 10.0f; // Distância da câmera para a origem
 
 // For free camera
-glm::vec4 camera_position_c   = glm::vec4(0.0f, 0.0f, 8.0f, 1.0f);
+glm::vec4 camera_position_c   = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 glm::vec4 camera_up_vector    = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
 
 glm::vec4 save_camera_position_free = glm::vec4(0.0f, 0.0f, 8.0f, 1.0f);
@@ -182,7 +184,7 @@ glm::vec4 camera_view_vector  = camera_lookat_l - camera_position_c;
 
 float save_cameraTheta_lookAt = 0.0f;
 float save_cameraPhi_lookAt = 0.0f;
-float save_cameraDistance_lookAt = 10.0f;
+float save_cameraDistance_lookAt = 30.0f;
 
 // Variáveis que controlam rotação do antebraço
 float g_ForearmAngleZ = 0.0f;
@@ -294,9 +296,9 @@ int main(int argc, char* argv[])
     LoadShadersFromFiles();
 
     // Carregamos duas imagens para serem utilizadas como textura
-    LoadTextureImage("../../data/tc-earth_daymap_surface.jpg");      // TextureImage0
-    LoadTextureImage("../../data/tc-earth_nightmap_citylights.gif"); // TextureImage1
     LoadTextureImage("../../data/palm1_uv_m2.bmp");
+    LoadTextureImage("../../data/13913_Sun_diff.jpg");
+    LoadTextureImage("../../data/streetTexture.jpg");
 
     // Construímos a representação de objetos geométricos através de malhas de triângulos
     ObjModel spheremodel("../../data/sphere.obj");
@@ -314,6 +316,10 @@ int main(int argc, char* argv[])
     ObjModel planemodel("../../data/plane.obj");
     ComputeNormals(&planemodel);
     BuildTrianglesAndAddToVirtualScene(&planemodel);
+
+    ObjModel buildingmodel("../../data/skyscraper.obj");
+    ComputeNormals(&buildingmodel);
+    BuildTrianglesAndAddToVirtualScene(&buildingmodel);
 
     if ( argc > 1 )
     {
@@ -395,7 +401,7 @@ int main(int argc, char* argv[])
         {
             // Projeção Perspectiva.
             // Para definição do field of view (FOV), veja slide 227 do documento "Aula_09_Projecoes.pdf".
-            float field_of_view = 3.141592 / 3.0f;
+            float field_of_view = 3.141592 / 2.0f;
             projection = Matrix_Perspective(field_of_view, g_ScreenRatio, nearplane, farplane);
         }
         else
@@ -420,20 +426,22 @@ int main(int argc, char* argv[])
         glUniformMatrix4fv(view_uniform       , 1 , GL_FALSE , glm::value_ptr(view));
         glUniformMatrix4fv(projection_uniform , 1 , GL_FALSE , glm::value_ptr(projection));
 
-        #define SPHERE 0
-        #define ROMAN  1
-        #define PALM   2
-        #define PLANE  3
+        #define SPHERE     0
+        #define ROMAN      1
+        #define PALM       2
+        #define STREET      3
+        #define SKYSCRAPER 4
 
-        // Desenhamos o modelo da esfera
-        model = Matrix_Translate(0.0f,0.0f,0.0f)
-              * Matrix_Rotate_Y(g_AngleY + (float)glfwGetTime() * 5.0f);
+        // Desenhamos o modelo do sol
+        model = Matrix_Translate(7.0f,7.0f,-12.0f)
+                * Matrix_Scale(2.0f, 2.0f, 2.0f)
+                * Matrix_Rotate_Y(g_AngleY + (float)glfwGetTime() * 0.25f);
         glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(object_id_uniform, SPHERE);
         DrawVirtualObject("sphere");
 
-        // Desenhamos o modelo do coelho
-        model = Matrix_Translate(0.0f,1.0f,0.0f)
+        // Desenhamos o modelo do romano
+        model = Matrix_Translate(0.0f,-1.1f,-8.0f)
               * Matrix_Scale(0.1f, 0.1f, 0.1f)
               * Matrix_Rotate_X(-M_PI_2)
               * Matrix_Rotate_Z(g_AngleZ + (float)glfwGetTime() * 5.0f);
@@ -441,17 +449,113 @@ int main(int argc, char* argv[])
         glUniform1i(object_id_uniform, ROMAN);
         DrawVirtualObject("RomanEmporer");
 
-        model = Matrix_Translate(0.0f,-1.0f,-5.0f)
+        // Desenhamos o modelo da palma
+        model = Matrix_Translate(-3.0f,-5.0f,-8.0f)
+                * Matrix_Scale(0.005f, 0.005f, 0.005f)
+                * Matrix_Rotate_Y(M_PI);
+        glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+        glUniform1i(object_id_uniform, PALM);
+        DrawVirtualObject("palm1");
+
+        model = Matrix_Translate(3.0f,-5.0f,-8.0f)
                 * Matrix_Scale(0.005f, 0.005f, 0.005f);
         glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(object_id_uniform, PALM);
         DrawVirtualObject("palm1");
 
-        // Desenhamos o plano do chão
-        model = Matrix_Translate(0.0f,-1.1f,0.0f);
+        model = Matrix_Translate(8.0f,-5.0f,-3.0f)
+                * Matrix_Scale(0.005f, 0.005f, 0.005f)
+                * Matrix_Rotate_Y(M_PI_2);
         glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
-        glUniform1i(object_id_uniform, PLANE);
+        glUniform1i(object_id_uniform, PALM);
+        DrawVirtualObject("palm1");
+
+        model = Matrix_Translate(8.0f,-5.0f,3.0f)
+                * Matrix_Scale(0.005f, 0.005f, 0.005f)
+                * Matrix_Rotate_Y(-M_PI_2);
+        glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+        glUniform1i(object_id_uniform, PALM);
+        DrawVirtualObject("palm1");
+
+        model = Matrix_Translate(3.0f,-5.0f,8.0f)
+                * Matrix_Scale(0.005f, 0.005f, 0.005f);
+        glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+        glUniform1i(object_id_uniform, PALM);
+        DrawVirtualObject("palm1");
+
+        model = Matrix_Translate(-3.0f,-5.0f,8.0f)
+                * Matrix_Scale(0.005f, 0.005f, 0.005f)
+                * Matrix_Rotate_Y(M_PI);
+        glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+        glUniform1i(object_id_uniform, PALM);
+        DrawVirtualObject("palm1");
+
+        model = Matrix_Translate(-8.0f,-5.0f,-3.0f)
+                * Matrix_Scale(0.005f, 0.005f, 0.005f)
+                * Matrix_Rotate_Y(M_PI_2);
+        glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+        glUniform1i(object_id_uniform, PALM);
+        DrawVirtualObject("palm1");
+
+        model = Matrix_Translate(-8.0f,-5.0f,3.0f)
+                * Matrix_Scale(0.005f, 0.005f, 0.005f)
+                * Matrix_Rotate_Y(-M_PI_2);
+        glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+        glUniform1i(object_id_uniform, PALM);
+        DrawVirtualObject("palm1");
+
+        // Desenhamos o plano do chão 1
+        model = Matrix_Translate(0.0f,-1.100f,0.0f)
+                * Matrix_Scale(1.0f, 1.0f, 30.0f);
+        glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+        glUniform1i(object_id_uniform, STREET);
         DrawVirtualObject("plane");
+
+        // Desenhamos o plano do chão 2
+        model = Matrix_Rotate_Y(M_PI_2)
+                * Matrix_Translate(0.0f,-1.101f,0.0f)
+                * Matrix_Scale(1.0f, 1.0f, 30.0f);
+        glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+        glUniform1i(object_id_uniform, STREET);
+        DrawVirtualObject("plane");
+
+        // Desenhamos o plano do chão 3
+        model = Matrix_Rotate_Y(M_PI_2/2)
+                * Matrix_Translate(0.0f,-1.102f,0.0f)
+                * Matrix_Scale(1.0f, 1.0f, 30.0f);
+        glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+        glUniform1i(object_id_uniform, STREET);
+        DrawVirtualObject("plane");
+
+        // Desenhamos o plano do chão 4
+        model = Matrix_Rotate_Y(-(M_PI_2/2))
+                * Matrix_Translate(0.0f,-1.103f,0.0f)
+                * Matrix_Scale(1.0f, 1.0f, 30.0f);
+        glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+        glUniform1i(object_id_uniform, STREET);
+        DrawVirtualObject("plane");
+
+        // Desenhamos o prédio corporativo
+        model = Matrix_Rotate_Y(M_PI/2.66)
+                * Matrix_Translate(0.0f,3.0f,-40.0f)
+                * Matrix_Scale(0.6f, 0.6f, 0.6f);
+        glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+        glUniform1i(object_id_uniform, SKYSCRAPER);
+        DrawVirtualObject("fall");
+        DrawVirtualObject("fall2");
+        DrawVirtualObject("floor");
+        DrawVirtualObject("floor2");
+        DrawVirtualObject("fall3");
+        DrawVirtualObject("fall4");
+        DrawVirtualObject("fall5");
+        DrawVirtualObject("floor3");
+        DrawVirtualObject("walls");
+        DrawVirtualObject("columns");
+        DrawVirtualObject("windows");
+        DrawVirtualObject("sidewalk");
+        DrawVirtualObject("grid");
+        DrawVirtualObject("roof");
+        DrawVirtualObject("ring");
 
         // Pegamos um vértice com coordenadas de modelo (0.5, 0.5, 0.5, 1) e o
         // passamos por todos os sistemas de coordenadas armazenados nas
@@ -559,40 +663,40 @@ void DrawVirtualObject(const char* object_name)
     {
         if(g_UsePerspectiveProjection)
         {
-            camera_position_c.x += 0.05 * camera_view_vector.x;
-            camera_position_c.y += 0.05 * camera_view_vector.y;
-            camera_position_c.z += 0.05 * camera_view_vector.z;
+            camera_position_c.x += 0.01 * camera_view_vector.x;
+            camera_position_c.y += 0.01 * camera_view_vector.y;
+            camera_position_c.z += 0.01 * camera_view_vector.z;
         }
         else
-            g_CameraDistance -= 0.05;
+            g_CameraDistance -= 0.01;
     }
 
     if(isPressed_S)
     {
         if(g_UsePerspectiveProjection)
         {
-            camera_position_c.x -= 0.05 * camera_view_vector.x;
-            camera_position_c.y -= 0.05 * camera_view_vector.y;
-            camera_position_c.z -= 0.05 * camera_view_vector.z;
+            camera_position_c.x -= 0.01 * camera_view_vector.x;
+            camera_position_c.y -= 0.01 * camera_view_vector.y;
+            camera_position_c.z -= 0.01 * camera_view_vector.z;
         }
         else
-            g_CameraDistance += 0.05;
+            g_CameraDistance += 0.01;
     }
 
     if(isPressed_A)
     {
         glm::vec4 leftVector = crossproduct(camera_up_vector, camera_view_vector);
-        camera_position_c.x += 0.05 * leftVector.x;
-        camera_position_c.y += 0.05 * leftVector.y;
-        camera_position_c.z += 0.05 * leftVector.z;
+        camera_position_c.x += 0.01 * leftVector.x;
+        camera_position_c.y += 0.01 * leftVector.y;
+        camera_position_c.z += 0.01 * leftVector.z;
     }
 
     if(isPressed_D)
     {
         glm::vec4 rightVector = crossproduct(camera_view_vector, camera_up_vector);
-        camera_position_c.x += 0.05 * rightVector.x;
-        camera_position_c.y += 0.05 * rightVector.y;
-        camera_position_c.z += 0.05 * rightVector.z;
+        camera_position_c.x += 0.01 * rightVector.x;
+        camera_position_c.y += 0.01 * rightVector.y;
+        camera_position_c.z += 0.01 * rightVector.z;
     }
 
     // Setamos as variáveis "bbox_min" e "bbox_max" do fragment shader
@@ -664,9 +768,9 @@ void LoadShadersFromFiles()
 
     // Variáveis em "shader_fragment.glsl" para acesso das imagens de textura
     glUseProgram(program_id);
-    glUniform1i(glGetUniformLocation(program_id, "TextureImage0"), 0);
-    glUniform1i(glGetUniformLocation(program_id, "TextureImage1"), 1);
-    glUniform1i(glGetUniformLocation(program_id, "PalmTexture"), 2);
+    glUniform1i(glGetUniformLocation(program_id, "PalmTexture"), 0);
+    glUniform1i(glGetUniformLocation(program_id, "SunTexture"), 1);
+    glUniform1i(glGetUniformLocation(program_id, "StreetTexture"), 2);
     glUseProgram(0);
 }
 
@@ -1142,8 +1246,8 @@ void CursorPosCallback(GLFWwindow* window, double xpos, double ypos)
         float dy = ypos - g_LastCursorPosY;
     
         // Atualizamos parâmetros da câmera com os deslocamentos
-        g_CameraTheta -= 0.01f*dx;
-        g_CameraPhi   += 0.01f*dy;
+        g_CameraTheta -= 0.004f*dx;
+        g_CameraPhi   += 0.004f*dy;
     
         // Em coordenadas esféricas, o ângulo phi deve ficar entre -pi/2 e +pi/2.
         float phimax = 3.141592f/2;
@@ -1331,6 +1435,7 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
 
     if (key == GLFW_KEY_C && action == GLFW_PRESS)
     {
+        // tecla C controla câmera free ou look-at
         if(g_UseLookAtCamera) {
             g_UseLookAtCamera = false;
             save_cameraTheta_lookAt = g_CameraTheta;

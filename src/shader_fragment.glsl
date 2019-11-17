@@ -19,10 +19,11 @@ uniform mat4 view;
 uniform mat4 projection;
 
 // Identificador que define qual objeto está sendo desenhado no momento
-#define SPHERE 0
-#define ROMAN  1
-# define PALM  2
-#define PLANE  3
+#define SPHERE   0
+#define ROMAN    1
+#define PALM     2
+#define STREET    3
+#define BUILDING 4
 uniform int object_id;
 
 // Parâmetros da axis-aligned bounding box (AABB) do modelo
@@ -30,9 +31,9 @@ uniform vec4 bbox_min;
 uniform vec4 bbox_max;
 
 // Variáveis para acesso das imagens de textura
-uniform sampler2D TextureImage0;
-uniform sampler2D TextureImage1;
 uniform sampler2D PalmTexture;
+uniform sampler2D SunTexture;
+uniform sampler2D StreetTexture;
 
 // O valor de saída ("out") de um Fragment Shader é a cor final do fragmento.
 out vec3 color;
@@ -60,10 +61,19 @@ void main()
     vec4 n = normalize(normal);
 
     // Vetor que define o sentido da fonte de luz em relação ao ponto atual.
-    vec4 l = normalize(vec4(1.0,1.0,0.0,0.0));
+    vec4 l = normalize(vec4(1.0f, 1.0f, -1.0f, 0.0f));
 
     // Vetor que define o sentido da câmera em relação ao ponto atual.
     vec4 v = normalize(camera_position - p);
+
+    // Vetor que define o sentido da reflexão especular ideal.
+    vec4 r = -l + 2 * n * (dot(n, l));
+
+    // Parâmetros que definem as propriedades espectrais da superfície
+    vec3 Kd; // Refletância difusa
+    vec3 Ks; // Refletância especular
+    vec3 Ka; // Refletância ambiente
+    float q; // Expoente especular para o modelo de iluminação de Phong
 
     // Coordenadas de textura U e V
     float U = 0.0;
@@ -105,6 +115,30 @@ void main()
         // 'h' no slide 154 do documento "Aula_20_e_21_Mapeamento_de_Texturas.pdf".
         // Veja também a Questão 4 do Questionário 4 no Moodle.
 
+//        float minx = bbox_min.x;
+//        float maxx = bbox_max.x;
+//
+//        float miny = bbox_min.y;
+//        float maxy = bbox_max.y;
+//
+//        float minz = bbox_min.z;
+//        float maxz = bbox_max.z;
+//
+//        U = (position_model.x - minx) / (maxx - minx);
+//        V = (position_model.y - miny) / (maxy - miny);
+
+        Kd = vec3(192.0f/255.0f,192.0f/255.0f,192.0f/255.0f);
+        Ks = vec3(0.0,0.0,0.0);
+        Ka = vec3(96.0f/255.0f,96.0f/255.0f,96.0f/255.0f);
+        q = 128.0;
+    }
+    else if ( object_id == PALM )
+    {
+        U = texcoords.x;
+        V = texcoords.y;
+    }
+    else if ( object_id == STREET )
+    {
         float minx = bbox_min.x;
         float maxx = bbox_max.x;
 
@@ -117,38 +151,46 @@ void main()
         U = (position_model.x - minx) / (maxx - minx);
         V = (position_model.y - miny) / (maxy - miny);
     }
-    else if ( object_id == PALM )
+    else if ( object_id == BUILDING )
     {
-        // PREENCHA AQUI as coordenadas de textura do coelho, computadas com
-        // projeção planar XY em COORDENADAS DO MODELO. Utilize como referência
-        // o slide 111 do documento "Aula_20_e_21_Mapeamento_de_Texturas.pdf",
-        // e também use as variáveis min*/max* definidas abaixo para normalizar
-        // as coordenadas de textura U e V dentro do intervalo [0,1]. Para
-        // tanto, veja por exemplo o mapeamento da variável 'p_v' utilizando
-        // 'h' no slide 154 do documento "Aula_20_e_21_Mapeamento_de_Texturas.pdf".
-        // Veja também a Questão 4 do Questionário 4 no Moodle.
-
-        U = texcoords.x;
-        V = texcoords.y;
-    }
-    else if ( object_id == PLANE )
-    {
-        // Coordenadas de textura do plano, obtidas do arquivo OBJ.
         U = texcoords.x;
         V = texcoords.y;
     }
 
-    // Obtemos a refletância difusa a partir da leitura da imagem TextureImage0
-    vec3 Kd0 = texture(TextureImage0, vec2(U,V)).rgb;
+    // Obtemos a refletância difusa a partir da leitura das imagens
     vec3 Kd1 = texture(PalmTexture, vec2(U,V)).rgb;
+    vec3 Kd2 = texture(SunTexture, vec2(U,V)).rgb;
+    vec3 Kd3 = texture(StreetTexture, vec2(U,V)).rgb;
+
+    // Espectro da fonte de iluminação
+    vec3 I = vec3(1.0,1.0,1.0);
+
+    // Espectro da luz ambiente
+    vec3 Ia = vec3(0.2,0.2,0.2);
 
     // Equação de Iluminação
     float lambert = max(0,dot(n,l));
 
-    if ( object_id != PALM )
-        color = Kd0 * (lambert + 0.01);
-    else
+    if ( object_id == PALM )
         color = Kd1 * (lambert + 0.01);
+    else if ( object_id == SPHERE )
+        color = Kd2; // * (lambert + 0.01);
+    else if ( object_id == STREET )
+        color = Kd3 * (lambert + 0.01);
+    else if ( object_id == ROMAN ) {
+        // Termo difuso utilizando a lei dos cossenos de Lambert
+        vec3 lambert_diffuse_term = Kd * I * lambert;
+        // Termo ambiente
+        vec3 ambient_term = Ka * Ia;
+        // Vetor h (half-vector) para iluminação Blinn-Phong
+        vec4 h = (v + l) / normalize(v + l);
+        // Termo especular utilizando o modelo de iluminação de Blinn-Phong
+        vec3 blinn_phong_specular_term  = Ks * I * pow(dot(n, h), q);
+        //vec3 phong_specular_term  = Ks * I * pow(max(0, dot(r, v)), q);
+        // Cor final do fragmento calculada com uma combinação dos termos difuso, ambiente e especular
+        color = lambert_diffuse_term + ambient_term + blinn_phong_specular_term;
+    } else
+        color = vec3(1.0f, 1.0f, 1.0f) * (lambert + 0.01);
 
     // Cor final com correção gamma, considerando monitor sRGB.
     // Veja https://en.wikipedia.org/w/index.php?title=Gamma_correction&oldid=751281772#Windows.2C_Mac.2C_sRGB_and_TV.2Fvideo_standard_gammas

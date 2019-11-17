@@ -9,7 +9,28 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7465bb0b-c9e5-4f43-ba54-99c894907034" name="Default Changelist" comment="" />
+    <list default="true" id="7465bb0b-c9e5-4f43-ba54-99c894907034" name="Default Changelist" comment="Fix object positions, add .obj files">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/New Bitmap Image.mtl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/macOS/main" beforeDir="false" afterPath="$PROJECT_DIR$/bin/macOS/main" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/macOS/main.dSYM/Contents/Resources/DWARF/main" beforeDir="false" afterPath="$PROJECT_DIR$/bin/macOS/main.dSYM/Contents/Resources/DWARF/main" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/clion-log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/13913_Sun_v2_l3.obj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/EmpireState.obj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/New Bitmap Image.mtl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/blueTexture.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/bunny.obj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/pillar set.obj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/romanEmperor.obj" beforeDir="false" afterPath="$PROJECT_DIR$/data/romanEmperor.obj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/skyscraper.obj" beforeDir="false" afterPath="$PROJECT_DIR$/data/skyscraper.obj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/streetTexture.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/data/streetTexture.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/streetTexture.tif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/tc-earth_daymap_surface.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/tc-earth_nightmap_citylights.gif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/shader_fragment.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/src/shader_fragment.glsl" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,8 +40,15 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="ProjectId" id="1T5PEG95PbhtJ2msBdeEqUuoscb" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
@@ -29,6 +57,11 @@
     <property name="node.js.path.for.package.tslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/cmake-build-debug" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -59,10 +92,42 @@
       <workItem from="1573325028473" duration="11758000" />
       <workItem from="1573434897999" duration="2347000" />
       <workItem from="1573482453909" duration="16457000" />
+      <workItem from="1573579973927" duration="189000" />
+      <workItem from="1573861316568" duration="455000" />
+      <workItem from="1573866518136" duration="141000" />
+      <workItem from="1573866676461" duration="6930000" />
+      <workItem from="1573916912947" duration="11982000" />
+      <workItem from="1574005408096" duration="9372000" />
     </task>
+    <task id="LOCAL-00001" summary="Fix object positions, add .obj files">
+      <created>1573920218389</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1573920218389</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="Fix object positions, add .obj files" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix object positions, add .obj files" />
   </component>
 </project>
