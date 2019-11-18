@@ -1,7 +1,7 @@
 # 3ds Max Wavefront OBJ Exporter v0.97b - (c)2007 guruware
 # File Created: 23.01.2019 20:52:46
 
-mtllib pillar set.mtl
+# mtllib pillar set.mtl
 
 #
 # object pillar_basement

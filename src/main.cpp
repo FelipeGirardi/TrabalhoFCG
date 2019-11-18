@@ -251,7 +251,7 @@ int main(int argc, char* argv[])
     // Criamos uma janela do sistema operacional, com 800 colunas e 600 linhas
     // de pixels, e com título "INF01047 ...".
     GLFWwindow* window;
-    window = glfwCreateWindow(800, 600, "INF01047 - 00264098 - Felipe Girardi", NULL, NULL);
+    window = glfwCreateWindow(800, 600, "Aesthetic Raid", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -320,6 +320,10 @@ int main(int argc, char* argv[])
     ObjModel buildingmodel("../../data/skyscraper.obj");
     ComputeNormals(&buildingmodel);
     BuildTrianglesAndAddToVirtualScene(&buildingmodel);
+
+    ObjModel pillarmodel("../../data/pillarSet.obj");
+    ComputeNormals(&pillarmodel);
+    BuildTrianglesAndAddToVirtualScene(&pillarmodel);
 
     if ( argc > 1 )
     {
@@ -429,8 +433,9 @@ int main(int argc, char* argv[])
         #define SPHERE     0
         #define ROMAN      1
         #define PALM       2
-        #define STREET      3
+        #define STREET     3
         #define SKYSCRAPER 4
+        #define PILLAR     5
 
         // Desenhamos o modelo do sol
         model = Matrix_Translate(7.0f,7.0f,-12.0f)
@@ -556,6 +561,23 @@ int main(int argc, char* argv[])
         DrawVirtualObject("grid");
         DrawVirtualObject("roof");
         DrawVirtualObject("ring");
+
+        // Desenhamos a coluna historica
+        model = Matrix_Translate(-2.7f,-1.1f,5.0f)
+                * Matrix_Scale(0.01f, 0.01f, 0.01f);
+        glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+        glUniform1i(object_id_uniform, PILLAR);
+        DrawVirtualObject("pillar_basement");
+        DrawVirtualObject("pillar_decoration");
+        DrawVirtualObject("pillar_decoration2");
+
+        model = Matrix_Translate(5.5f,-1.1f,3.0f)
+                * Matrix_Scale(0.01f, 0.01f, 0.01f);
+        glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+        glUniform1i(object_id_uniform, PILLAR);
+        DrawVirtualObject("pillar_basement");
+        DrawVirtualObject("pillar_decoration");
+        DrawVirtualObject("pillar_decoration2");
 
         // Pegamos um vértice com coordenadas de modelo (0.5, 0.5, 0.5, 1) e o
         // passamos por todos os sistemas de coordenadas armazenados nas

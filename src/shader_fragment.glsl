@@ -22,8 +22,9 @@ uniform mat4 projection;
 #define SPHERE   0
 #define ROMAN    1
 #define PALM     2
-#define STREET    3
+#define STREET   3
 #define BUILDING 4
+#define PILLAR   5
 uniform int object_id;
 
 // Parâmetros da axis-aligned bounding box (AABB) do modelo
@@ -61,7 +62,7 @@ void main()
     vec4 n = normalize(normal);
 
     // Vetor que define o sentido da fonte de luz em relação ao ponto atual.
-    vec4 l = normalize(vec4(1.0f, 1.0f, -1.0f, 0.0f));
+    vec4 l = normalize(vec4(1.0f, 1.0f, -1.7f, 0.0f));
 
     // Vetor que define o sentido da câmera em relação ao ponto atual.
     vec4 v = normalize(camera_position - p);
@@ -152,6 +153,11 @@ void main()
         V = (position_model.y - miny) / (maxy - miny);
     }
     else if ( object_id == BUILDING )
+    {
+        U = texcoords.x;
+        V = texcoords.y;
+    }
+    else if ( object_id == PILLAR )
     {
         U = texcoords.x;
         V = texcoords.y;
