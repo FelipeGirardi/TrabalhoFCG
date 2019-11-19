@@ -445,11 +445,38 @@ int main(int argc, char* argv[])
         glUniform1i(object_id_uniform, SPHERE);
         DrawVirtualObject("sphere");
 
-        // Desenhamos o modelo do romano
-        model = Matrix_Translate(0.0f,-1.1f,-8.0f)
+        // Desenhamos as estátuas romanas
+        model = Matrix_Translate(0.0f,-1.1f,-40.0f + (float)glfwGetTime() * 2.0f)
               * Matrix_Scale(0.1f, 0.1f, 0.1f)
-              * Matrix_Rotate_X(-M_PI_2)
-              * Matrix_Rotate_Z(g_AngleZ + (float)glfwGetTime() * 5.0f);
+              * Matrix_Rotate_X(-M_PI_2);
+              //* Matrix_Rotate_Z(g_AngleZ + (float)glfwGetTime() * 2.5f);
+        glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+        glUniform1i(object_id_uniform, ROMAN);
+        DrawVirtualObject("RomanEmporer");
+
+        model = Matrix_Translate(0.0f,-1.1f,40.0f - (float)glfwGetTime() * 2.0f)
+                * Matrix_Scale(0.1f, 0.1f, 0.1f)
+                * Matrix_Rotate_X(-M_PI_2)
+                * Matrix_Rotate_Z(M_PI);
+                //* Matrix_Rotate_Z(g_AngleZ + (float)glfwGetTime() * 2.5f);
+        glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+        glUniform1i(object_id_uniform, ROMAN);
+        DrawVirtualObject("RomanEmporer");
+
+        model = Matrix_Translate(-40.0f + (float)glfwGetTime() * 2.0f,-1.1f,0.0f)
+                * Matrix_Scale(0.1f, 0.1f, 0.1f)
+                * Matrix_Rotate_X(-M_PI_2)
+                * Matrix_Rotate_Z(M_PI_2);
+                //* Matrix_Rotate_Z(g_AngleZ + (float)glfwGetTime() * 2.5f);
+        glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+        glUniform1i(object_id_uniform, ROMAN);
+        DrawVirtualObject("RomanEmporer");
+
+        model = Matrix_Translate(40.0f - (float)glfwGetTime() * 2.0f,-1.1f,0.0f)
+                * Matrix_Scale(0.1f, 0.1f, 0.1f)
+                * Matrix_Rotate_X(-M_PI_2)
+                * Matrix_Rotate_Z(-M_PI_2);
+                //* Matrix_Rotate_Z(g_AngleZ + (float)glfwGetTime() * 2.5f);
         glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(object_id_uniform, ROMAN);
         DrawVirtualObject("RomanEmporer");
@@ -509,33 +536,33 @@ int main(int argc, char* argv[])
         glUniform1i(object_id_uniform, PALM);
         DrawVirtualObject("palm1");
 
-        // Desenhamos o plano do chão 1
+        // Desenhamos o plano da estrada 1
         model = Matrix_Translate(0.0f,-1.100f,0.0f)
-                * Matrix_Scale(1.0f, 1.0f, 30.0f);
+                * Matrix_Scale(1.0f, 1.0f, 40.0f);
         glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(object_id_uniform, STREET);
         DrawVirtualObject("plane");
 
-        // Desenhamos o plano do chão 2
+        // Desenhamos o plano da estrada 2
         model = Matrix_Rotate_Y(M_PI_2)
                 * Matrix_Translate(0.0f,-1.101f,0.0f)
-                * Matrix_Scale(1.0f, 1.0f, 30.0f);
+                * Matrix_Scale(1.0f, 1.0f, 40.0f);
         glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(object_id_uniform, STREET);
         DrawVirtualObject("plane");
 
-        // Desenhamos o plano do chão 3
+        // Desenhamos o plano da estrada 3
         model = Matrix_Rotate_Y(M_PI_2/2)
                 * Matrix_Translate(0.0f,-1.102f,0.0f)
-                * Matrix_Scale(1.0f, 1.0f, 30.0f);
+                * Matrix_Scale(1.0f, 1.0f, 40.0f);
         glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(object_id_uniform, STREET);
         DrawVirtualObject("plane");
 
-        // Desenhamos o plano do chão 4
+        // Desenhamos o plano da estrada 4
         model = Matrix_Rotate_Y(-(M_PI_2/2))
                 * Matrix_Translate(0.0f,-1.103f,0.0f)
-                * Matrix_Scale(1.0f, 1.0f, 30.0f);
+                * Matrix_Scale(1.0f, 1.0f, 40.0f);
         glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(object_id_uniform, STREET);
         DrawVirtualObject("plane");
@@ -680,7 +707,7 @@ void DrawVirtualObject(const char* object_name)
     // comentários detalhados dentro da definição de BuildTrianglesAndAddToVirtualScene().
     glBindVertexArray(g_VirtualScene[object_name].vertex_array_object_id);
 
-    // for free camera
+    // movement for free camera (for debug purposes)
     if(isPressed_W)
     {
         if(g_UsePerspectiveProjection)

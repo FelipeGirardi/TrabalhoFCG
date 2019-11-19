@@ -13,10 +13,7 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bin/macOS/main" beforeDir="false" afterPath="$PROJECT_DIR$/bin/macOS/main" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bin/macOS/main.dSYM/Contents/Resources/DWARF/main" beforeDir="false" afterPath="$PROJECT_DIR$/bin/macOS/main.dSYM/Contents/Resources/DWARF/main" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/pillarSet.obj" beforeDir="false" afterPath="$PROJECT_DIR$/data/pillarSet.obj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/shader_fragment.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/src/shader_fragment.glsl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/shader_vertex.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/src/shader_vertex.glsl" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -84,7 +81,11 @@
       <workItem from="1573866518136" duration="141000" />
       <workItem from="1573866676461" duration="6930000" />
       <workItem from="1573916912947" duration="11982000" />
-      <workItem from="1574005408096" duration="17184000" />
+      <workItem from="1574005408096" duration="17536000" />
+      <workItem from="1574043705916" duration="158000" />
+      <workItem from="1574118323402" duration="5000" />
+      <workItem from="1574128051720" duration="1810000" />
+      <workItem from="1574169447778" duration="3462000" />
     </task>
     <task id="LOCAL-00001" summary="Fix object positions, add .obj files">
       <created>1573920218389</created>
