@@ -11,9 +11,8 @@
   <component name="ChangeListManager">
     <list default="true" id="7465bb0b-c9e5-4f43-ba54-99c894907034" name="Default Changelist" comment="Fix object positions, add .obj files">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/macOS/main" beforeDir="false" afterPath="$PROJECT_DIR$/bin/macOS/main" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/macOS/main.dSYM/Contents/Resources/DWARF/main" beforeDir="false" afterPath="$PROJECT_DIR$/bin/macOS/main.dSYM/Contents/Resources/DWARF/main" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/shader_fragment.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/src/shader_fragment.glsl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/shader_vertex.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/src/shader_vertex.glsl" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -86,6 +85,8 @@
       <workItem from="1574118323402" duration="5000" />
       <workItem from="1574128051720" duration="1810000" />
       <workItem from="1574169447778" duration="3462000" />
+      <workItem from="1574267554798" duration="3558000" />
+      <workItem from="1574375200515" duration="5685000" />
     </task>
     <task id="LOCAL-00001" summary="Fix object positions, add .obj files">
       <created>1573920218389</created>

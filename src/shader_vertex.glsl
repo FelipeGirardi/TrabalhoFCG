@@ -2,7 +2,7 @@
 
 // Atributos de v�rtice recebidos como entrada ("in") pelo Vertex Shader.
 // Veja a fun��o BuildTrianglesAndAddToVirtualScene() em "main.cpp".
-layout (location = 0) in vec4 model_coefficients;
+layout (location = 0) in vec4 vertex_coefficients;
 layout (location = 1) in vec4 normal_coefficients;
 layout (location = 2) in vec2 texture_coefficients;
 
@@ -10,15 +10,17 @@ layout (location = 2) in vec2 texture_coefficients;
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
+uniform vec4 light_position;
 
 // Atributos de v�rtice que ser�o gerados como sa�da ("out") pelo Vertex Shader.
 // ** Estes ser�o interpolados pelo rasterizador! ** gerando, assim, valores
 // para cada fragmento, os quais ser�o recebidos como entrada pelo Fragment
 // Shader. Veja o arquivo "shader_fragment.glsl".
 out vec4 position_world;
-out vec4 position_model;
+//out vec4 position_model;
 out vec4 normal;
 out vec2 texcoords;
+out vec4 cor_v;
 
 void main()
 {
@@ -34,7 +36,7 @@ void main()
     // deste Vertex Shader, a placa de v�deo (GPU) far� a divis�o por W. Veja
     // slide 189 do documento "Aula_09_Projecoes.pdf".
 
-    gl_Position = projection * view * model * model_coefficients;
+    gl_Position = projection * view * model * vertex_coefficients;
 
     // Como as vari�veis acima  (tipo vec4) s�o vetores com 4 coeficientes,
     // tamb�m � poss�vel acessar e modificar cada coeficiente de maneira
@@ -51,15 +53,21 @@ void main()
     // rasterizador para gerar atributos �nicos para cada fragmento gerado.
 
     // Posi��o do v�rtice atual no sistema de coordenadas global (World).
-    position_world = model * model_coefficients;
+    position_world = model * vertex_coefficients;
 
     // Posi��o do v�rtice atual no sistema de coordenadas local do modelo.
-    position_model = model_coefficients;
+//    position_model = model_coefficients;
 
     // Normal do v�rtice atual no sistema de coordenadas global (World).
     // Veja slide 107 do documento "Aula_07_Transformacoes_Geometricas_3D.pdf".
     normal = inverse(transpose(model)) * normal_coefficients;
     normal.w = 0.0;
+
+    vec4 l = normalize(light_position - position_world);
+    vec4 n = normalize(normal);
+    float lambert = max(0, dot(n,l));
+    vec3 colorAux = vec3(168.0f/255.0f, 157.0f/255.0f, 139.0f/255.0f) * (lambert + 0.01);
+    cor_v = vec4(colorAux.x, colorAux.y, colorAux.z, 1.0f);
 
     // Coordenadas de textura obtidas do arquivo OBJ (se existirem!)
     texcoords = texture_coefficients;

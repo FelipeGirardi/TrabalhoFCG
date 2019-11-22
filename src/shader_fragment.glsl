@@ -8,10 +8,13 @@ in vec4 position_world;
 in vec4 normal;
 
 // Posição do vértice atual no sistema de coordenadas local do modelo.
-in vec4 position_model;
-
-// Coordenadas de textura obtidas do arquivo OBJ (se existirem!)
+//in vec4 position_model;
+//
+//// Coordenadas de textura obtidas do arquivo OBJ (se existirem!)
 in vec2 texcoords;
+
+// Cor gerada pela interpolação de Gouraud
+in vec4 cor_v;
 
 // Matrizes computadas no código C++ e enviadas para a GPU
 uniform mat4 model;
@@ -37,7 +40,7 @@ uniform sampler2D SunTexture;
 uniform sampler2D StreetTexture;
 
 // O valor de saída ("out") de um Fragment Shader é a cor final do fragmento.
-out vec3 color;
+out vec4 color;
 
 // Constantes
 #define M_PI   3.14159265358979323846
@@ -80,6 +83,9 @@ void main()
     float U = 0.0;
     float V = 0.0;
 
+    // Variável auxiliar que guarda a cor final no formato vec3
+    vec3 colorAux;
+
     if ( object_id == SPHERE )
     {
         // PREENCHA AQUI as coordenadas de textura da esfera, computadas com
@@ -95,15 +101,18 @@ void main()
         //   constante M_PI
         //   variável position_model
 
-        vec4 bbox_center = (bbox_min + bbox_max) / 2.0;
-        vec4 pVector = position_model - bbox_center;
+//        vec4 bbox_center = (bbox_min + bbox_max) / 2.0;
+//        vec4 pVector = position_model - bbox_center;
+//
+//        float ro = length(pVector);
+//        float theta = atan(pVector.x, pVector.z);
+//        float phi = asin(pVector.y/ro);
+//
+//        U = (theta + M_PI) / (2 * M_PI);
+//        V = (phi + (M_PI_2)) / M_PI;
 
-        float ro = length(pVector);
-        float theta = atan(pVector.x, pVector.z);
-        float phi = asin(pVector.y/ro);
-
-        U = (theta + M_PI) / (2 * M_PI);
-        V = (phi + (M_PI_2)) / M_PI;
+        U = texcoords.x;
+        V = texcoords.y;
     }
     else if ( object_id == ROMAN )
     {
@@ -140,17 +149,20 @@ void main()
     }
     else if ( object_id == STREET )
     {
-        float minx = bbox_min.x;
-        float maxx = bbox_max.x;
+//        float minx = bbox_min.x;
+//        float maxx = bbox_max.x;
+//
+//        float miny = bbox_min.y;
+//        float maxy = bbox_max.y;
+//
+//        float minz = bbox_min.z;
+//        float maxz = bbox_max.z;
+//
+//        U = (position_model.x - minx) / (maxx - minx);
+//        V = (position_model.y - miny) / (maxy - miny);
 
-        float miny = bbox_min.y;
-        float maxy = bbox_max.y;
-
-        float minz = bbox_min.z;
-        float maxz = bbox_max.z;
-
-        U = (position_model.x - minx) / (maxx - minx);
-        V = (position_model.y - miny) / (maxy - miny);
+        U = texcoords.x;
+        V = texcoords.y;
     }
     else if ( object_id == BUILDING )
     {
@@ -159,8 +171,8 @@ void main()
     }
     else if ( object_id == PILLAR )
     {
-        U = texcoords.x;
-        V = texcoords.y;
+//        U = texcoords.x;
+//        V = texcoords.y;
     }
 
     // Obtemos a refletância difusa a partir da leitura das imagens
@@ -177,12 +189,15 @@ void main()
     // Equação de Iluminação
     float lambert = max(0,dot(n,l));
 
-    if ( object_id == PALM )
-        color = Kd1 * (lambert + 0.01);
-    else if ( object_id == SPHERE )
-        color = Kd2; // * (lambert + 0.01);
-    else if ( object_id == STREET )
-        color = Kd3 * (lambert + 0.01);
+    if ( object_id == PALM ) {
+        colorAux = Kd1 * (lambert + 0.01);
+    }
+    else if ( object_id == SPHERE ) {
+        colorAux = Kd2; // * (lambert + 0.01);
+    }
+    else if ( object_id == STREET ) {
+        colorAux = Kd3 * (lambert + 0.01);
+    }
     else if ( object_id == ROMAN ) {
         // Termo difuso utilizando a lei dos cossenos de Lambert
         vec3 lambert_diffuse_term = Kd * I * lambert;
@@ -194,12 +209,17 @@ void main()
         vec3 blinn_phong_specular_term  = Ks * I * pow(dot(n, h), q);
         //vec3 phong_specular_term  = Ks * I * pow(max(0, dot(r, v)), q);
         // Cor final do fragmento calculada com uma combinação dos termos difuso, ambiente e especular
-        color = lambert_diffuse_term + ambient_term + blinn_phong_specular_term;
-    } else
-        color = vec3(1.0f, 1.0f, 1.0f) * (lambert + 0.01);
+        colorAux = lambert_diffuse_term + ambient_term + blinn_phong_specular_term;
+    } else if ( object_id == PILLAR ) {
+        colorAux = vec3(cor_v.x, cor_v.y, cor_v.z);
+    }
+    else {
+        colorAux = vec3(1.0f, 1.0f, 1.0f) * (lambert + 0.01);
+    }
 
+    color = vec4(colorAux.x, colorAux.y, colorAux.z, 1.0f);
     // Cor final com correção gamma, considerando monitor sRGB.
     // Veja https://en.wikipedia.org/w/index.php?title=Gamma_correction&oldid=751281772#Windows.2C_Mac.2C_sRGB_and_TV.2Fvideo_standard_gammas
-    color = pow(color, vec3(1.0,1.0,1.0)/2.2);
+    color = pow(color, vec4(1.0,1.0,1.0,1.0)/2.2);
 } 
 
