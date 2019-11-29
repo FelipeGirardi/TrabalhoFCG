@@ -220,6 +220,34 @@ bool isPressed_V = false;
 bool keepshooting = false;
 bool initBezier = false;
 
+
+// Controle das estátuas
+glm::vec4 statue1 = glm::vec4(0.0f,0.0f,0.0f,1.0f);
+glm::vec4 statue2 = glm::vec4(0.0f,0.0f,0.0f,1.0f);
+glm::vec4 statue3 = glm::vec4(0.0f,0.0f,0.0f,1.0f);
+glm::vec4 statue4 = glm::vec4(0.0f,0.0f,0.0f,1.0f);
+bool destroyed1 = false;
+bool destroyed2 = false;
+bool destroyed3 = false;
+bool destroyed4 = false;
+
+bool notcollided1 = true;
+bool notcollided2 = true;
+bool notcollided3 = true;
+bool notcollided4 = true;
+
+float dist1 = 99;
+float dist2 = 99;
+float dist3 = 99;
+float dist4 = 99;
+
+float radius_proj = 0.3;
+float radius_statue = 1.3;
+
+
+// Controle de pontos
+int points = 0;
+
 // Necessárias para calcular BezierPath
 float PInBezierPath = 0.0f;
 float accelerationRate = 0.005;
@@ -230,6 +258,13 @@ glm::vec4 bezier_point_2 = glm::vec4(0.0f, 1.1f, -4.0f, 1.0f);
 glm::vec4 bezier_point_3 = glm::vec4(0.0f, -1.3f,-8.0f, 1.0f);
 glm::vec4 bezier_point_4 = glm::vec4(0.0f, 1.1f, -12.0f, 1.0f);
 glm::vec4 bezier_point_result = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+
+// Control speed
+glm::vec4 previous_bezier_point = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+glm::vec4 Vel = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+float old_time = 0;
+glm::vec4 new_center = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+
 
 // Variáveis que definem um programa de GPU (shaders). Veja função LoadShadersFromFiles().
 GLuint vertex_shader_id;
@@ -485,6 +520,8 @@ int main(int argc, char* argv[])
 
         if(keepshooting){
         // Desenhamos o modelo do projétil
+        //previous_bezier_point = bezier_point_result;
+
         model = Matrix_Translate(bezier_point_result.x,bezier_point_result.y,bezier_point_result.z)
                 * Matrix_Scale(0.25f, 0.25f, 0.25f)
                 * Matrix_Rotate_X(-M_PI_2)
@@ -508,12 +545,66 @@ int main(int argc, char* argv[])
         printf("PROJ_Z - %f\n", proj_z);
 */
         BezierPath(PInBezierPath);
-        PInBezierPath += 0.005f;
+        PInBezierPath += accelerationRate;
 
         if(PInBezierPath >= 1.0f){
             PInBezierPath = 0;
             keepshooting = false;
         }
+
+    /*
+        float new_time = (float)glfwGetTime();
+
+        Vel = (bezier_point_result - previous_bezier_point) / (new_time - old_time);
+
+        printf("Time new - %f\n", new_time);
+        printf("Time old - %f\n", old_time);
+        printf("Time elapsed: %f\n",(new_time - old_time));
+        printf("Current speed: %f %f %f\n", Vel.x, Vel.y, Vel.z);
+
+        new_center = bezier_point_result + (new_time - old_time)*Vel;
+
+        printf("New_Center: %f %f %f\n", new_center.x, new_center.y, new_center.z);
+        printf("Previous center: %f %f %f\n", bezier_point_result.x, bezier_point_result.y, bezier_point_result.z);
+
+        old_time = new_time;
+*/
+        //------------------------APENAS PARA TESTAR a intersecção com as estátuas------------------------
+        if(dist1 < radius_proj + radius_statue && notcollided1){
+            destroyed1 = true;
+            points += 100;
+
+            keepshooting = false;
+            PInBezierPath = 0;
+            notcollided1 = false;
+        }
+        if(dist2 < radius_proj + radius_statue && notcollided2){
+            destroyed2 = true;
+            points += 100;
+
+            keepshooting = false;
+            PInBezierPath = 0;
+            notcollided2 = false;
+        }
+
+        if(dist3 < radius_proj + radius_statue && notcollided3){
+            destroyed3 = true;
+            points += 100;
+
+            keepshooting = false;
+            PInBezierPath = 0;
+            notcollided3 = false;
+        }
+
+        if(dist4 < radius_proj + radius_statue && notcollided4){
+            destroyed4 = true;
+            points += 100;
+
+            keepshooting = false;
+            PInBezierPath = 0;
+            notcollided4 = false;
+        }
+
 
         }
 
@@ -525,6 +616,7 @@ int main(int argc, char* argv[])
         glUniform1i(object_id_uniform, SPHERE);
         DrawVirtualObject("sphere");
 
+        if(!destroyed1){
         // Desenhamos as estátuas romanas
         model = Matrix_Translate(0.0f,-1.1f,-40.0f + (float)glfwGetTime() * 2.0f)
               * Matrix_Scale(0.1f, 0.1f, 0.1f)
@@ -534,6 +626,15 @@ int main(int argc, char* argv[])
         glUniform1i(object_id_uniform, ROMAN);
         DrawVirtualObject("RomanEmporer");
 
+        //------------------------APENAS PARA TESTAR------------------------
+        statue1 = glm::vec4(0.0f,-1.1f,-40.0f + (float)glfwGetTime() * 2.0f,1.0f);
+
+
+        dist1 = sqrt(pow((bezier_point_result.x-statue1.x),2) + pow((bezier_point_result.y-statue1.y),2) + pow((bezier_point_result.z-statue1.z), 2));
+        //printf("Dist - %f\n", dist1);
+        }
+
+        if(!destroyed2){
         model = Matrix_Translate(0.0f,-1.1f,40.0f - (float)glfwGetTime() * 2.0f)
                 * Matrix_Scale(0.1f, 0.1f, 0.1f)
                 * Matrix_Rotate_X(-M_PI_2)
@@ -543,6 +644,12 @@ int main(int argc, char* argv[])
         glUniform1i(object_id_uniform, ROMAN);
         DrawVirtualObject("RomanEmporer");
 
+        statue2 = glm::vec4(0.0f,-1.1f,40.0f - (float)glfwGetTime() * 2.0f,1.0f);
+
+        dist2 = sqrt(pow((bezier_point_result.x-statue2.x),2) + pow((bezier_point_result.y-statue2.y),2) + pow((bezier_point_result.z-statue2.z), 2));
+        }
+
+        if(!destroyed3){
         model = Matrix_Translate(-40.0f + (float)glfwGetTime() * 2.0f,-1.1f,0.0f)
                 * Matrix_Scale(0.1f, 0.1f, 0.1f)
                 * Matrix_Rotate_X(-M_PI_2)
@@ -552,6 +659,12 @@ int main(int argc, char* argv[])
         glUniform1i(object_id_uniform, ROMAN);
         DrawVirtualObject("RomanEmporer");
 
+        statue3 = glm::vec4(-40.0f + (float)glfwGetTime() * 2.0f,-1.1f,0.0f,1.0f);
+
+        dist3 = sqrt(pow((bezier_point_result.x-statue3.x),2) + pow((bezier_point_result.y-statue3.y),2) + pow((bezier_point_result.z-statue3.z), 2));
+
+        }
+        if(!destroyed4){
         model = Matrix_Translate(40.0f - (float)glfwGetTime() * 2.0f,-1.1f,0.0f)
                 * Matrix_Scale(0.1f, 0.1f, 0.1f)
                 * Matrix_Rotate_X(-M_PI_2)
@@ -560,6 +673,11 @@ int main(int argc, char* argv[])
         glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(object_id_uniform, ROMAN);
         DrawVirtualObject("RomanEmporer");
+
+        statue4 = glm::vec4(40.0f - (float)glfwGetTime() * 2.0f,-1.1f,0.0f,1.0f);
+
+        dist4 = sqrt(pow((bezier_point_result.x-statue4.x),2) + pow((bezier_point_result.y-statue4.y),2) + pow((bezier_point_result.z-statue4.z), 2));
+        }
 
         // Desenhamos o modelo da palma
         model = Matrix_Translate(-3.0f,-5.0f,-8.0f)
@@ -1678,7 +1796,10 @@ void TextRendering_ShowEulerAngles(GLFWwindow* window)
     float pad = TextRendering_LineHeight(window);
 
     char buffer[80];
-    snprintf(buffer, 80, "Euler Angles rotation matrix = Z(%.2f)*Y(%.2f)*X(%.2f)\n", g_AngleZ, g_AngleY, g_AngleX);
+    //snprintf(buffer, 80, "Euler Angles rotation matrix = Z(%.2f)*Y(%.2f)*X(%.2f)\n", g_AngleZ, g_AngleY, g_AngleX);
+
+    // Printa o número de pontos na tela
+    snprintf(buffer, 80, "POINTS: %d\n", points);
 
     TextRendering_PrintString(window, buffer, -1.0f+pad/10, -1.0f+2*pad/10, 1.0f);
 }
