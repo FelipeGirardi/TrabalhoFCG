@@ -81,6 +81,9 @@ struct ObjModel
     }
 };
 
+// Print de Game Over
+void TextRendering_ShowGameOver(GLFWwindow* window);
+
 // Cálculo da trajétoria do projétil
 void BezierPath(float t);
 
@@ -241,9 +244,47 @@ float dist2 = 99;
 float dist3 = 99;
 float dist4 = 99;
 
-float radius_proj = 0.3;
-float radius_statue = 1.3;
+float radius_proj = 0.35;
+float radius_statue = 1.45;
 
+// Respawn da estátua 1
+float counter_respawn = 0;
+float counter_respawn_old = 0;
+bool notinit_counter = false;
+float time_beginning = 0;
+
+// Respawn da estátua 2
+float counter_respawn2 = 0;
+float counter_respawn_old2 = 0;
+bool notinit_counter2 = false;
+float time_beginning2 = 0;
+
+// Respawn da estátua 3
+float counter_respawn3 = 0;
+float counter_respawn_old3 = 0;
+bool notinit_counter3 = false;
+float time_beginning3 = 0;
+
+// Respawn da estátua 4
+float counter_respawn4 = 0;
+float counter_respawn_old4 = 0;
+bool notinit_counter4 = false;
+float time_beginning4 = 0;
+
+
+// Controle da intersecção das estátuas com o centro (esfera - ponto)
+glm::vec4 center = glm::vec4(0.0f,0.0f,0.0f,1.0f);
+
+float dist_center1 = 99;
+float dist_center2 = 99;
+float dist_center3 = 99;
+float dist_center4 = 99;
+
+// Controle do fim do jogo
+bool notinit_counter_gameover = false;
+float counter_gameover = 0;
+float counter_gameover_old = 0;
+bool print_game_over = false;
 
 // Controle de pontos
 int points = 0;
@@ -501,6 +542,7 @@ int main(int argc, char* argv[])
         #define PILLAR     5
         #define PROJECTILE 6
 
+        // Inicializa as variáveis para fazer a curva de bezier do projétil
         if(!initBezier){
             bezier_point_1 = glm::vec4(proj_x,     (proj_y),         (proj_z), 1.0f);
             bezier_point_2 = glm::vec4(proj_x*(4), (proj_y)+1.1, (proj_z)*(4), 1.0f);
@@ -511,6 +553,7 @@ int main(int argc, char* argv[])
 
         }
 
+        // Testa se a tecla V (de disparo do projétil) foi acionada, e caso sim, desenha o projétil
         if(isPressed_V){
             keepshooting = true;
             isPressed_V = false;
@@ -529,47 +572,19 @@ int main(int argc, char* argv[])
         glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(object_id_uniform, PROJECTILE);
         DrawVirtualObject("sphere");
-/*
-        printf("BEZ_X - %f\n", bezier_point_result.x);
-        printf("BEZ_Y - %f\n", bezier_point_result.y);
-        printf("BEZ_Z - %f\n", bezier_point_result.z);
-*/
-/*
-        printf("Dist - %f\n", g_CameraDistance);
-        printf("PHI - %f\n", g_CameraPhi);
-        printf("THETA - %f\n", g_CameraTheta);
-*/
-/*
-        printf("PROJ_X - %f\n", proj_x);
-        printf("PROJ_Y - %f\n", proj_y);
-        printf("PROJ_Z - %f\n", proj_z);
-*/
+
         BezierPath(PInBezierPath);
         PInBezierPath += accelerationRate;
 
+        // Caso a curva de bezier tenha "acabado", para de desenhar o projétil
         if(PInBezierPath >= 1.0f){
             PInBezierPath = 0;
             keepshooting = false;
         }
 
-    /*
-        float new_time = (float)glfwGetTime();
+        //------------------------TESTA A INTERSECCÃO DO PROJÉTIL COM AS ESTÁTUAS (EFERA - ESFERA)------------------------
 
-        Vel = (bezier_point_result - previous_bezier_point) / (new_time - old_time);
-
-        printf("Time new - %f\n", new_time);
-        printf("Time old - %f\n", old_time);
-        printf("Time elapsed: %f\n",(new_time - old_time));
-        printf("Current speed: %f %f %f\n", Vel.x, Vel.y, Vel.z);
-
-        new_center = bezier_point_result + (new_time - old_time)*Vel;
-
-        printf("New_Center: %f %f %f\n", new_center.x, new_center.y, new_center.z);
-        printf("Previous center: %f %f %f\n", bezier_point_result.x, bezier_point_result.y, bezier_point_result.z);
-
-        old_time = new_time;
-*/
-        //------------------------APENAS PARA TESTAR a intersecção com as estátuas------------------------
+        // Caso haja intersecção entre a esfera do projétil e a que simula a estátua 1, apaga a estátua e o projétil
         if(dist1 < radius_proj + radius_statue && notcollided1){
             destroyed1 = true;
             points += 100;
@@ -578,6 +593,8 @@ int main(int argc, char* argv[])
             PInBezierPath = 0;
             notcollided1 = false;
         }
+
+        // Caso haja intersecção entre a esfera do projétil e a que simula a estátua 2, apaga a estátua e o projétil
         if(dist2 < radius_proj + radius_statue && notcollided2){
             destroyed2 = true;
             points += 100;
@@ -587,6 +604,7 @@ int main(int argc, char* argv[])
             notcollided2 = false;
         }
 
+        // Caso haja intersecção entre a esfera do projétil e a que simula a estátua 3, apaga a estátua e o projétil
         if(dist3 < radius_proj + radius_statue && notcollided3){
             destroyed3 = true;
             points += 100;
@@ -596,6 +614,7 @@ int main(int argc, char* argv[])
             notcollided3 = false;
         }
 
+        // Caso haja intersecção entre a esfera do projétil e a que simula a estátua 4, apaga a estátua e o projétil
         if(dist4 < radius_proj + radius_statue && notcollided4){
             destroyed4 = true;
             points += 100;
@@ -605,8 +624,120 @@ int main(int argc, char* argv[])
             notcollided4 = false;
         }
 
-
         }
+
+        //----------------------TESTE DE INTERSECÇÃO DAS ESTÁTUAS COM O CENTRO(PLAYER) -> PONTO - ESFERA----------------------
+
+        // Caso haja intersecção entre o centro e a esfera que simula a estátua 1, fecha o jogo (game over)
+        if(dist_center1 < radius_statue){
+
+            TextRendering_ShowGameOver(window);
+/*
+            counter_gameover = (float)glfwGetTime();
+
+            if(!notinit_counter_gameover){
+                counter_gameover_old = counter_gameover;
+                notinit_counter_gameover = true;
+            }
+
+            while(counter_gameover - counter_gameover_old < 10){
+                counter_gameover = (float)glfwGetTime();
+                TextRendering_ShowGameOver(window);
+            }
+*/
+
+            glfwSetWindowShouldClose(window, GL_TRUE);
+        }
+
+        // Caso haja intersecção entre o centro e a esfera que simula a estátua 2, fecha o jogo (game over)
+        if(dist_center2 < radius_statue){
+            TextRendering_ShowGameOver(window);
+            glfwSetWindowShouldClose(window, GL_TRUE);
+        }
+
+        // Caso haja intersecção entre o centro e a esfera que simula a estátua 3, fecha o jogo (game over)
+        if(dist_center3 < radius_statue){
+            TextRendering_ShowGameOver(window);
+            glfwSetWindowShouldClose(window, GL_TRUE);
+        }
+
+        // Caso haja intersecção entre o centro e a esfera que simula a estátua 4, fecha o jogo (game over)
+        if(dist_center4 < radius_statue){
+            TextRendering_ShowGameOver(window);
+            glfwSetWindowShouldClose(window, GL_TRUE);
+        }
+
+        //--------------------------------RESPAWN DAS ESTÁTUAS DESTRUÍDAS (COOLDOWN DE 10 SEGUNDOS)--------------------------------
+
+        // Estátua 1
+        if(destroyed1){
+            counter_respawn = (float)glfwGetTime();
+
+            if(!notinit_counter){
+                counter_respawn_old = counter_respawn;
+                notinit_counter = true;
+            }
+            //printf("%f\n", counter_respawn - counter_respawn_old);
+
+            if(counter_respawn - counter_respawn_old >= 10){
+                destroyed1 = false;
+                notinit_counter = false;
+                time_beginning = (float)glfwGetTime();
+                notcollided1 = true;
+            }
+        }
+
+        // Estátua 2
+        if(destroyed2){
+            counter_respawn2 = (float)glfwGetTime();
+
+            if(!notinit_counter2){
+                counter_respawn_old2 = counter_respawn2;
+                notinit_counter2 = true;
+            }
+
+            if(counter_respawn2 - counter_respawn_old2 >= 10){
+                destroyed2 = false;
+                notinit_counter2 = false;
+                time_beginning2 = (float)glfwGetTime();
+                notcollided2 = true;
+            }
+        }
+
+        // Estátua 3
+        if(destroyed3){
+            counter_respawn3 = (float)glfwGetTime();
+
+            if(!notinit_counter3){
+                counter_respawn_old3 = counter_respawn3;
+                notinit_counter3 = true;
+            }
+
+            if(counter_respawn3 - counter_respawn_old3 >= 10){
+                destroyed3 = false;
+                notinit_counter3 = false;
+                time_beginning3 = (float)glfwGetTime();
+                notcollided3 = true;
+            }
+        }
+
+        // Estátua 4
+        if(destroyed4){
+            counter_respawn4 = (float)glfwGetTime();
+
+            if(!notinit_counter4){
+                counter_respawn_old4 = counter_respawn4;
+                notinit_counter4 = true;
+            }
+
+            if(counter_respawn4 - counter_respawn_old4 >= 10){
+                destroyed4 = false;
+                notinit_counter4 = false;
+                time_beginning4 = (float)glfwGetTime();
+                notcollided4 = true;
+            }
+        }
+        //--------------------------------FIM DO RESPAWN DAS ESTÁTUAS--------------------------------
 
         // Desenhamos o modelo do sol
         model = Matrix_Translate(7.0f,7.0f,-12.0f)
@@ -616,9 +747,10 @@ int main(int argc, char* argv[])
         glUniform1i(object_id_uniform, SPHERE);
         DrawVirtualObject("sphere");
 
+        // Se a estátua 1 não foi destruída, a desenha
         if(!destroyed1){
         // Desenhamos as estátuas romanas
-        model = Matrix_Translate(0.0f,-1.1f,-40.0f + (float)glfwGetTime() * 2.0f)
+        model = Matrix_Translate(0.0f,-1.1f,-40.0f + ((float)glfwGetTime() - time_beginning) * 2.0f)
               * Matrix_Scale(0.1f, 0.1f, 0.1f)
               * Matrix_Rotate_X(-M_PI_2);
               //* Matrix_Rotate_Z(g_AngleZ + (float)glfwGetTime() * 2.5f);
@@ -626,16 +758,20 @@ int main(int argc, char* argv[])
         glUniform1i(object_id_uniform, ROMAN);
         DrawVirtualObject("RomanEmporer");
 
-        //------------------------APENAS PARA TESTAR------------------------
-        statue1 = glm::vec4(0.0f,-1.1f,-40.0f + (float)glfwGetTime() * 2.0f,1.0f);
+        //------------------------PONTOS ARA CALCULAR A INTERSECÇÃO DE ESFERAS DINÂMICA( = ESFERA E RAIO)------------------------
+        statue1 = glm::vec4(0.0f,-1.1f,-40.0f + ((float)glfwGetTime() - time_beginning) * 2.0f,1.0f);
 
 
         dist1 = sqrt(pow((bezier_point_result.x-statue1.x),2) + pow((bezier_point_result.y-statue1.y),2) + pow((bezier_point_result.z-statue1.z), 2));
         //printf("Dist - %f\n", dist1);
+
+        dist_center1 = sqrt(pow((center.x-statue1.x),2) + pow((center.y-statue1.y),2) + pow((center.z-statue1.z), 2));
+        //printf("Dist to center - %f\n", dist_center1);
         }
 
+        // Se a estátua 2 não foi destruída, a desenha
         if(!destroyed2){
-        model = Matrix_Translate(0.0f,-1.1f,40.0f - (float)glfwGetTime() * 2.0f)
+        model = Matrix_Translate(0.0f,-1.1f,40.0f - ((float)glfwGetTime() - time_beginning2) * 2.0f)
                 * Matrix_Scale(0.1f, 0.1f, 0.1f)
                 * Matrix_Rotate_X(-M_PI_2)
                 * Matrix_Rotate_Z(M_PI);
@@ -644,13 +780,16 @@ int main(int argc, char* argv[])
         glUniform1i(object_id_uniform, ROMAN);
         DrawVirtualObject("RomanEmporer");
 
-        statue2 = glm::vec4(0.0f,-1.1f,40.0f - (float)glfwGetTime() * 2.0f,1.0f);
+        statue2 = glm::vec4(0.0f,-1.1f,40.0f - ((float)glfwGetTime() - time_beginning2) * 2.0f,1.0f);
 
         dist2 = sqrt(pow((bezier_point_result.x-statue2.x),2) + pow((bezier_point_result.y-statue2.y),2) + pow((bezier_point_result.z-statue2.z), 2));
+
+        dist_center2 = sqrt(pow((center.x-statue2.x),2) + pow((center.y-statue2.y),2) + pow((center.z-statue2.z), 2));
         }
 
+        // Se a estátua 3 não foi destruída, a desenha
         if(!destroyed3){
-        model = Matrix_Translate(-40.0f + (float)glfwGetTime() * 2.0f,-1.1f,0.0f)
+        model = Matrix_Translate(-40.0f + ((float)glfwGetTime() - time_beginning3) * 2.0f,-1.1f,0.0f)
                 * Matrix_Scale(0.1f, 0.1f, 0.1f)
                 * Matrix_Rotate_X(-M_PI_2)
                 * Matrix_Rotate_Z(M_PI_2);
@@ -659,13 +798,16 @@ int main(int argc, char* argv[])
         glUniform1i(object_id_uniform, ROMAN);
         DrawVirtualObject("RomanEmporer");
 
-        statue3 = glm::vec4(-40.0f + (float)glfwGetTime() * 2.0f,-1.1f,0.0f,1.0f);
+        statue3 = glm::vec4(-40.0f + ((float)glfwGetTime() - time_beginning3) * 2.0f,-1.1f,0.0f,1.0f);
 
         dist3 = sqrt(pow((bezier_point_result.x-statue3.x),2) + pow((bezier_point_result.y-statue3.y),2) + pow((bezier_point_result.z-statue3.z), 2));
 
+        dist_center3 = sqrt(pow((center.x-statue3.x),2) + pow((center.y-statue3.y),2) + pow((center.z-statue3.z), 2));
         }
+
+        // Se a estátua 4 não foi destruída, a desenha
         if(!destroyed4){
-        model = Matrix_Translate(40.0f - (float)glfwGetTime() * 2.0f,-1.1f,0.0f)
+        model = Matrix_Translate(40.0f - ((float)glfwGetTime() - time_beginning4) * 2.0f,-1.1f,0.0f)
                 * Matrix_Scale(0.1f, 0.1f, 0.1f)
                 * Matrix_Rotate_X(-M_PI_2)
                 * Matrix_Rotate_Z(-M_PI_2);
@@ -674,9 +816,11 @@ int main(int argc, char* argv[])
         glUniform1i(object_id_uniform, ROMAN);
         DrawVirtualObject("RomanEmporer");
 
-        statue4 = glm::vec4(40.0f - (float)glfwGetTime() * 2.0f,-1.1f,0.0f,1.0f);
+        statue4 = glm::vec4(40.0f - ((float)glfwGetTime() - time_beginning4) * 2.0f,-1.1f,0.0f,1.0f);
 
         dist4 = sqrt(pow((bezier_point_result.x-statue4.x),2) + pow((bezier_point_result.y-statue4.y),2) + pow((bezier_point_result.z-statue4.z), 2));
+
+        dist_center4 = sqrt(pow((center.x-statue4.x),2) + pow((center.y-statue4.y),2) + pow((center.z-statue4.z), 2));
         }
 
         // Desenhamos o modelo da palma
@@ -2039,6 +2183,20 @@ void BezierPath(float t)
 
     bezier_point_result = glm::vec4(p1.x+p2.x+p3.x+p4.x, p1.y+p2.y+p3.y+p4.y, p1.z+p2.z+p3.z+p4.z, 1.0f);
 }
+
+void TextRendering_ShowGameOver(GLFWwindow* window)
+{
+    if ( !g_ShowInfoText )
+        return;
+
+    char buffer[30];
+
+    // Printa Game Over na tela
+    snprintf(buffer, 30, "GAME OVER\n");
+
+    TextRendering_PrintString(window, buffer, -0.2f, 0.0f, 3.0f);
+}
+
 
 // set makeprg=cd\ ..\ &&\ make\ run\ >/dev/null
 // vim: set spell spelllang=pt_br :
