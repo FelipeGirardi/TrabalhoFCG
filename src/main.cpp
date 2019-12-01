@@ -285,6 +285,7 @@ bool notinit_counter_gameover = false;
 float counter_gameover = 0;
 float counter_gameover_old = 0;
 bool print_game_over = false;
+bool game_over_condition = false;
 
 // Controle de pontos
 int points = 0;
@@ -629,10 +630,25 @@ int main(int argc, char* argv[])
         //----------------------TESTE DE INTERSECÇÃO DAS ESTÁTUAS COM O CENTRO(PLAYER) -> PONTO - ESFERA----------------------
 
         // Caso haja intersecção entre o centro e a esfera que simula a estátua 1, fecha o jogo (game over)
-        if(dist_center1 < radius_statue){
+        if(dist_center1 < radius_statue || game_over_condition == true){
+            game_over_condition = true;
 
-            TextRendering_ShowGameOver(window);
-/*
+            counter_gameover = (float)glfwGetTime();
+
+            if(!notinit_counter_gameover){
+                counter_gameover_old = counter_gameover;
+                notinit_counter_gameover = true;
+            }
+            //printf("Time - %f\n", counter_gameover - counter_gameover_old);
+            if(counter_gameover - counter_gameover_old >= 3){
+                glfwSetWindowShouldClose(window, GL_TRUE);
+            }
+        }
+
+        // Caso haja intersecção entre o centro e a esfera que simula a estátua 2, fecha o jogo (game over)
+        if(dist_center2 < radius_statue || game_over_condition == true){
+            game_over_condition = true;
+
             counter_gameover = (float)glfwGetTime();
 
             if(!notinit_counter_gameover){
@@ -640,31 +656,41 @@ int main(int argc, char* argv[])
                 notinit_counter_gameover = true;
             }
 
-            while(counter_gameover - counter_gameover_old < 10){
-                counter_gameover = (float)glfwGetTime();
-                TextRendering_ShowGameOver(window);
+            if(counter_gameover - counter_gameover_old >= 3){
+                glfwSetWindowShouldClose(window, GL_TRUE);
             }
-*/
-
-            glfwSetWindowShouldClose(window, GL_TRUE);
-        }
-
-        // Caso haja intersecção entre o centro e a esfera que simula a estátua 2, fecha o jogo (game over)
-        if(dist_center2 < radius_statue){
-            TextRendering_ShowGameOver(window);
-            glfwSetWindowShouldClose(window, GL_TRUE);
         }
 
         // Caso haja intersecção entre o centro e a esfera que simula a estátua 3, fecha o jogo (game over)
-        if(dist_center3 < radius_statue){
-            TextRendering_ShowGameOver(window);
-            glfwSetWindowShouldClose(window, GL_TRUE);
+        if(dist_center3 < radius_statue || game_over_condition == true){
+            game_over_condition = true;
+
+            counter_gameover = (float)glfwGetTime();
+
+            if(!notinit_counter_gameover){
+                counter_gameover_old = counter_gameover;
+                notinit_counter_gameover = true;
+            }
+
+            if(counter_gameover - counter_gameover_old >= 3){
+                glfwSetWindowShouldClose(window, GL_TRUE);
+            }
         }
 
         // Caso haja intersecção entre o centro e a esfera que simula a estátua 4, fecha o jogo (game over)
-        if(dist_center4 < radius_statue){
-            TextRendering_ShowGameOver(window);
-            glfwSetWindowShouldClose(window, GL_TRUE);
+        if(dist_center4 < radius_statue || game_over_condition == true){
+           game_over_condition = true;
+
+            counter_gameover = (float)glfwGetTime();
+
+            if(!notinit_counter_gameover){
+                counter_gameover_old = counter_gameover;
+                notinit_counter_gameover = true;
+            }
+
+            if(counter_gameover - counter_gameover_old >= 3){
+                glfwSetWindowShouldClose(window, GL_TRUE);
+            }
         }
 
         //--------------------------------RESPAWN DAS ESTÁTUAS DESTRUÍDAS (COOLDOWN DE 10 SEGUNDOS)--------------------------------
@@ -968,6 +994,12 @@ int main(int argc, char* argv[])
         // Imprimimos na tela informação sobre o número de quadros renderizados
         // por segundo (frames per second).
         TextRendering_ShowFramesPerSecond(window);
+
+
+        // Quando acontece game over, printa na tela
+        if(game_over_condition){
+        TextRendering_ShowGameOver(window);
+        }
 
         // O framebuffer onde OpenGL executa as operações de renderização não
         // é o mesmo que está sendo mostrado para o usuário, caso contrário
@@ -1945,7 +1977,7 @@ void TextRendering_ShowEulerAngles(GLFWwindow* window)
     // Printa o número de pontos na tela
     snprintf(buffer, 80, "POINTS: %d\n", points);
 
-    TextRendering_PrintString(window, buffer, -1.0f+pad/10, -1.0f+2*pad/10, 1.0f);
+    TextRendering_PrintString(window, buffer, -1.0f+pad/10, +0.95f, 1.0f);
 }
 
 // Escrevemos na tela qual matriz de projeção está sendo utilizada.
