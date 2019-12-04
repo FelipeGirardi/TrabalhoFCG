@@ -229,10 +229,10 @@ glm::vec4 statue1 = glm::vec4(0.0f,0.0f,0.0f,1.0f);
 glm::vec4 statue2 = glm::vec4(0.0f,0.0f,0.0f,1.0f);
 glm::vec4 statue3 = glm::vec4(0.0f,0.0f,0.0f,1.0f);
 glm::vec4 statue4 = glm::vec4(0.0f,0.0f,0.0f,1.0f);
-bool destroyed1 = false;
-bool destroyed2 = false;
-bool destroyed3 = false;
-bool destroyed4 = false;
+bool destroyed1 = true;
+bool destroyed2 = true;
+bool destroyed3 = true;
+bool destroyed4 = true;
 
 bool notcollided1 = true;
 bool notcollided2 = true;
@@ -249,28 +249,31 @@ float radius_statue = 1.45;
 
 // Respawn da estátua 1
 float counter_respawn = 0;
-float counter_respawn_old = 0;
-bool notinit_counter = false;
+float counter_respawn_old = -8;
+bool notinit_counter = true;
 float time_beginning = 0;
+float random_respawn_time1 = 10;
 
 // Respawn da estátua 2
 float counter_respawn2 = 0;
-float counter_respawn_old2 = 0;
-bool notinit_counter2 = false;
+float counter_respawn_old2 = 4;
+bool notinit_counter2 = true;
 float time_beginning2 = 0;
+float random_respawn_time2 = 10;
 
 // Respawn da estátua 3
 float counter_respawn3 = 0;
-float counter_respawn_old3 = 0;
-bool notinit_counter3 = false;
+float counter_respawn_old3 = -4;
+bool notinit_counter3 = true;
 float time_beginning3 = 0;
+float random_respawn_time3 = 10;
 
 // Respawn da estátua 4
 float counter_respawn4 = 0;
 float counter_respawn_old4 = 0;
-bool notinit_counter4 = false;
+bool notinit_counter4 = true;
 float time_beginning4 = 0;
-
+float random_respawn_time4 = 10;
 
 // Controle da intersecção das estátuas com o centro (esfera - ponto)
 glm::vec4 center = glm::vec4(0.0f,0.0f,0.0f,1.0f);
@@ -291,7 +294,7 @@ bool game_over_condition = false;
 int points = 0;
 
 // Necessárias para calcular BezierPath
-float PInBezierPath = 0.0f;
+float PinBezierPath = 0.0f;
 float accelerationRate = 0.005;
 
 // Pontos que o projétil se move em
@@ -549,7 +552,7 @@ int main(int argc, char* argv[])
             bezier_point_2 = glm::vec4(proj_x*(4), (proj_y)+1.1, (proj_z)*(4), 1.0f);
             bezier_point_3 = glm::vec4(proj_x*(8), (proj_y)-1.2, (proj_z)*(8), 1.0f);
             bezier_point_4 = glm::vec4(proj_x*(12),(proj_y)+1.1, (proj_z)*(12),1.0f);
-            PInBezierPath = 0.0;
+            PinBezierPath = 0.0;
             initBezier = true;
 
         }
@@ -558,7 +561,7 @@ int main(int argc, char* argv[])
         if(isPressed_V){
             keepshooting = true;
             isPressed_V = false;
-            PInBezierPath = 0.0;
+            PinBezierPath = 0.0;
             initBezier = false;
         }
 
@@ -574,16 +577,16 @@ int main(int argc, char* argv[])
         glUniform1i(object_id_uniform, PROJECTILE);
         DrawVirtualObject("sphere");
 
-        BezierPath(PInBezierPath);
-        PInBezierPath += accelerationRate;
+        BezierPath(PinBezierPath);
+        PinBezierPath += accelerationRate;
 
         // Caso a curva de bezier tenha "acabado", para de desenhar o projétil
-        if(PInBezierPath >= 1.0f){
-            PInBezierPath = 0;
+        if(PinBezierPath >= 1.0f){
+            PinBezierPath = 0;
             keepshooting = false;
         }
 
-        //------------------------TESTA A INTERSECCÃO DO PROJÉTIL COM AS ESTÁTUAS (EFERA - ESFERA)------------------------
+        //------------------------TESTA A INTERSECCÃO DO PROJÉTIL COM AS ESTÁTUAS (ESFERA - ESFERA)------------------------
 
         // Caso haja intersecção entre a esfera do projétil e a que simula a estátua 1, apaga a estátua e o projétil
         if(dist1 < radius_proj + radius_statue && notcollided1){
@@ -591,7 +594,7 @@ int main(int argc, char* argv[])
             points += 100;
 
             keepshooting = false;
-            PInBezierPath = 0;
+            PinBezierPath = 0;
             notcollided1 = false;
         }
 
@@ -601,7 +604,7 @@ int main(int argc, char* argv[])
             points += 100;
 
             keepshooting = false;
-            PInBezierPath = 0;
+            PinBezierPath = 0;
             notcollided2 = false;
         }
 
@@ -611,7 +614,7 @@ int main(int argc, char* argv[])
             points += 100;
 
             keepshooting = false;
-            PInBezierPath = 0;
+            PinBezierPath = 0;
             notcollided3 = false;
         }
 
@@ -621,7 +624,7 @@ int main(int argc, char* argv[])
             points += 100;
 
             keepshooting = false;
-            PInBezierPath = 0;
+            PinBezierPath = 0;
             notcollided4 = false;
         }
 
@@ -630,7 +633,7 @@ int main(int argc, char* argv[])
         //----------------------TESTE DE INTERSECÇÃO DAS ESTÁTUAS COM O CENTRO(PLAYER) -> PONTO - ESFERA----------------------
 
         // Caso haja intersecção entre o centro e a esfera que simula a estátua 1, fecha o jogo (game over)
-        if(dist_center1 < radius_statue || game_over_condition == true){
+        if(dist_center1 < radius_statue || game_over_condition){
             game_over_condition = true;
 
             counter_gameover = (float)glfwGetTime();
@@ -646,7 +649,7 @@ int main(int argc, char* argv[])
         }
 
         // Caso haja intersecção entre o centro e a esfera que simula a estátua 2, fecha o jogo (game over)
-        if(dist_center2 < radius_statue || game_over_condition == true){
+        if(dist_center2 < radius_statue || game_over_condition){
             game_over_condition = true;
 
             counter_gameover = (float)glfwGetTime();
@@ -662,7 +665,7 @@ int main(int argc, char* argv[])
         }
 
         // Caso haja intersecção entre o centro e a esfera que simula a estátua 3, fecha o jogo (game over)
-        if(dist_center3 < radius_statue || game_over_condition == true){
+        if(dist_center3 < radius_statue || game_over_condition){
             game_over_condition = true;
 
             counter_gameover = (float)glfwGetTime();
@@ -678,7 +681,7 @@ int main(int argc, char* argv[])
         }
 
         // Caso haja intersecção entre o centro e a esfera que simula a estátua 4, fecha o jogo (game over)
-        if(dist_center4 < radius_statue || game_over_condition == true){
+        if(dist_center4 < radius_statue || game_over_condition){
            game_over_condition = true;
 
             counter_gameover = (float)glfwGetTime();
@@ -705,11 +708,12 @@ int main(int argc, char* argv[])
             }
             //printf("%f\n", counter_respawn - counter_respawn_old);
 
-            if(counter_respawn - counter_respawn_old >= 10){
+            if(counter_respawn - counter_respawn_old >= random_respawn_time1){
                 destroyed1 = false;
                 notinit_counter = false;
                 time_beginning = (float)glfwGetTime();
                 notcollided1 = true;
+                random_respawn_time1 = (rand() / (float)RAND_MAX) * 8 + 2; // respawn time between 2s and 10s
             }
         }
 
@@ -722,11 +726,12 @@ int main(int argc, char* argv[])
                 notinit_counter2 = true;
             }
 
-            if(counter_respawn2 - counter_respawn_old2 >= 10){
+            if(counter_respawn2 - counter_respawn_old2 >= random_respawn_time2){
                 destroyed2 = false;
                 notinit_counter2 = false;
                 time_beginning2 = (float)glfwGetTime();
                 notcollided2 = true;
+                random_respawn_time2 = (rand() / (float)RAND_MAX) * 8 + 2; // respawn time between 2s and 10s
             }
         }
 
@@ -739,11 +744,12 @@ int main(int argc, char* argv[])
                 notinit_counter3 = true;
             }
 
-            if(counter_respawn3 - counter_respawn_old3 >= 10){
+            if(counter_respawn3 - counter_respawn_old3 >= random_respawn_time3){
                 destroyed3 = false;
                 notinit_counter3 = false;
                 time_beginning3 = (float)glfwGetTime();
                 notcollided3 = true;
+                random_respawn_time3 = (rand() / (float)RAND_MAX) * 8 + 2; // respawn time between 2s and 10s
             }
         }
 
@@ -756,11 +762,12 @@ int main(int argc, char* argv[])
                 notinit_counter4 = true;
             }
 
-            if(counter_respawn4 - counter_respawn_old4 >= 10){
+            if(counter_respawn4 - counter_respawn_old4 >= random_respawn_time4){
                 destroyed4 = false;
                 notinit_counter4 = false;
                 time_beginning4 = (float)glfwGetTime();
                 notcollided4 = true;
+                random_respawn_time4 = (rand() / (float)RAND_MAX) * 8 + 2; // respawn time between 2s and 10s
             }
         }
         //--------------------------------FIM DO RESPAWN DAS ESTÁTUAS--------------------------------

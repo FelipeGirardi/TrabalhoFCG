@@ -11,10 +11,10 @@
   <component name="ChangeListManager">
     <list default="true" id="7465bb0b-c9e5-4f43-ba54-99c894907034" name="Default Changelist" comment="Fix object positions, add .obj files">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/shader_fragment.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/src/shader_fragment.glsl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/shader_vertex.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/src/shader_vertex.glsl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/macOS/main" beforeDir="false" afterPath="$PROJECT_DIR$/bin/macOS/main" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/macOS/main.dSYM/Contents/Resources/DWARF/main" beforeDir="false" afterPath="$PROJECT_DIR$/bin/macOS/main.dSYM/Contents/Resources/DWARF/main" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.cpp" afterDir="false" />
     </list>
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -29,6 +29,11 @@
   <component name="ProjectId" id="1T5PEG95PbhtJ2msBdeEqUuoscb" />
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
@@ -46,15 +51,15 @@
       <recent name="$PROJECT_DIR$/cmake-build-debug" />
     </key>
   </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
+  <component name="ServiceViewManager">
+    <option name="viewStates">
       <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
       </list>
     </option>
   </component>
@@ -87,6 +92,9 @@
       <workItem from="1574169447778" duration="3462000" />
       <workItem from="1574267554798" duration="3558000" />
       <workItem from="1574375200515" duration="5685000" />
+      <workItem from="1575210790166" duration="141000" />
+      <workItem from="1575211030273" duration="2524000" />
+      <workItem from="1575403544480" duration="4174000" />
     </task>
     <task id="LOCAL-00001" summary="Fix object positions, add .obj files">
       <created>1573920218389</created>
@@ -118,5 +126,11 @@
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="Fix object positions, add .obj files" />
     <option name="LAST_COMMIT_MESSAGE" value="Fix object positions, add .obj files" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="519" y="332" key="com.intellij.ide.util.TipDialog" timestamp="1575403545562">
+      <screen x="0" y="23" width="1680" height="953" />
+    </state>
+    <state x="519" y="332" key="com.intellij.ide.util.TipDialog/0.23.1680.953@0.23.1680.953" timestamp="1575403545562" />
   </component>
 </project>
